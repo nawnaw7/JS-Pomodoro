@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>JS Pomodoro</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+    <div class="pomodoro-container">
+        <h1 class="title">Pomodoro Timer</h1>
+        <div class="border1"></div>
+
+        <div class="setting-block">
+        	<div class="session-block">
+        		<p class="titles">Session</p>
+        		<div class="times" id="session-time"><span>25</span></div>
+        		<button class="buttons substract-minute">-</button>
+        		<button class="buttons add-minute">+</button>
+        	</div>
+        	<div class="break-block">
+        		<p class="titles">Break</p>
+        		<div class="times" id="break-time"><span>5</span></div>
+        		<button class="buttons substract-minute">-</button>
+        		<button class="buttons add-minute">+</button>
+        	</div>
+        </div>
+
+        <div class="timer-block">
+        	<p>work session</p>
+        	<div class="timer">17:27</div>
+        	<div class="progress-bar"></div>
+        	<hr>
+        </div>
+
+        <div class="control-block">
+        	<button class="ctrl-btn start">START</button>
+        	<button class="ctrl-btn pause">PAUSE</button>
+        	<button class="ctrl-btn reset">RESET</button>
+        </div>
+    </div>
+</body>
+
+</html>
