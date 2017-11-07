@@ -3,29 +3,36 @@
 /////////////////////////////////////////////
 var timerController = (function() {
 
-    var Session = function(sessWork, sessBreak) {
-        this.sessWork = sessWork;
-        this.sessBreak = sessBreak;
+    var Session = function(workLength, breakLength) {
+        this.workLength = workLength;
+        this.breakLength = breakLength;
     };
 
-    var workLength = 25;
-    var breakLength = 5;
-   
-    return {
-        sessionTime: function(value) {
-            if (value === 'addWork') {
-                workLength++;
-            } else if (value === 'subWork') {
-                workLength--;
-            } else if (value === 'addBrk') {
-                breakLength++;
-            } else if (value === 'subBrk') {
-                breakLength--;
-            }
+    var allSessions = {
+        newSession: {},
+        completedSessions: 0
+    };
 
-            console.log(workLength + ', ' + breakLength);
+
+    return {
+        addSession: function(workT, brkT) {
+            var newSess;
+
+            // create new session
+            newSess = new Session(workT, brkT);
+
+            // add new session to all sessions data
+            allSessions.newSession = newSess;
+
+            // return the new session
+            return newSess;
+        },
+
+        testing: function() {
+            console.log(allSessions.newSession);
         }
     };
+
 })();
 
 
@@ -43,22 +50,26 @@ var UIController = (function() {
         subWork: '#sub-work',
         addBreak: '#add-break',
         subBreak: '#sub-break',
+        timer: '.timer',
 	};
     
     var workTime = document.querySelector(DOMStrings.workTime);
     var breakTime = document.querySelector(DOMStrings.breakTime);
+    var timer = document.querySelector(DOMStrings.timer);
     var work = 25;
     var brk = 5;
 
     return {
 
-        updateWorkBrkUI: function(val) {
+        updateSessionUI: function(val) {
             if (val === 'addWork') {
                 work++;
                 workTime.innerHTML = work;
+                timer.innerHTML = work + ':00';
             } else if (val === 'subWork') {
                 work--;
                 workTime.innerHTML = work;
+                timer.innerHTML = work + ':00';
 
             } else if (val === 'addBrk') {
                 brk++;
@@ -69,6 +80,11 @@ var UIController = (function() {
                 breakTime.innerHTML = brk;
 
             }
+
+            return {
+                sessionWorkTime: work,
+                sessionBreakTime: brk
+            };
         },
 
     	getDOMStrings: function() {
@@ -88,25 +104,42 @@ var UIController = (function() {
 /////////////////////////////////////////////
 var controller = (function(timerCtrl, UICtrl) {
 
-	var DOM = UICtrl.getDOMStrings();
+    var setupEventListeners = function() {
+        var DOM = UICtrl.getDOMStrings();
+            
+        document.querySelector(DOM.addWork).addEventListener('click', updateSessAndBreak);
+        document.querySelector(DOM.subWork).addEventListener('click', updateSessAndBreak);
+        document.querySelector(DOM.addBreak).addEventListener('click', updateSessAndBreak);
+        document.querySelector(DOM.subBreak).addEventListener('click', updateSessAndBreak);
+    };
 	
-    document.querySelector(DOM.addWork).addEventListener('click', updateSessAndBreak);
-    document.querySelector(DOM.subWork).addEventListener('click', updateSessAndBreak);
-    document.querySelector(DOM.addBreak).addEventListener('click', updateSessAndBreak);
-    document.querySelector(DOM.subBreak).addEventListener('click', updateSessAndBreak);
 
 
-    function updateSessAndBreak() {
-        var newSession;
+    var updateSessAndBreak = function() {
+        var sessionm, newSess;
 
         //1. Get value of buttons
         var btnValue = this.value;
 
-        //2. Create session and break in Timer Controller
-        timerCtrl.sessionTime(btnValue);
+        //2. Update session UI + return session object
+        session = UICtrl.updateSessionUI(btnValue);
 
-        //3. Update UI
-        UICtrl.updateWorkBrkUI(btnValue);
-    }
+
+        //3. Create new session in Timer Controller based on set work and break time
+        newSess = timerController.addSession(session.sessionWorkTime, session.sessionBreakTime);
+    };
+
+
+
+    return {
+        init: function() {
+            console.log('App has started.');
+            setupEventListeners();
+        }
+    };
 
 })(timerController, UIController);
+
+
+
+controller.init();
